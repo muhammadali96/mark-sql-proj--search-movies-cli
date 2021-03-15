@@ -6,3 +6,5 @@ import { Client } from "pg";
 //we only need to specify the (non-default) database name.
 const client = new Client({ database: 'omdb' });
 console.log("Welcome to search-movies-cli!");
+
+const prompt = require("readline-sync").question("What is your name?");
