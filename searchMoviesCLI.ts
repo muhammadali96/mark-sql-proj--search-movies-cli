@@ -6,9 +6,10 @@ import { Client } from "pg";
 //and default username and password,
 //we only need to specify the (non-default) database name.
 
-console.log("Welcome to search-movies-cli!");
 const client = new Client({ database: 'omdb' });
-let searchTerm = ""
+
+
+
 
 const text = "SELECT id, name, date, runtime, budget FROM movies \
 WHERE kind = 'movie' \
@@ -18,11 +19,19 @@ LIMIT 10";
 
 
 async function makeQuery() {
-    let searchTerm = question("What is your favourite movie?")
+    const searchTerm = question("What is your favourite movie?")
     const values = [`%${searchTerm}%`]
+    let continueRunning = true
+
+    if (searchTerm != 'quit') {
+        continueRunning = true
+    }
+    else {
+        continueRunning = false
+    }
 
     async function execute() {
-        if (searchTerm === 'q') {
+        if (continueRunning === false) {
             console.log("Exiting Query!")
         }
         else {
@@ -32,15 +41,17 @@ async function makeQuery() {
 
     }
     await execute()
-    return searchTerm
+    return continueRunning
 }
-
+// 
 async function CLI() {
+    console.log("about to connect")
     await client.connect()
-    console.log("Successfully connected")
+    console.log("Success")
+    let continueRunning = true
 
-    while (searchTerm != 'q') {
-        searchTerm = await makeQuery()
+    while (continueRunning === true) {
+        continueRunning = await makeQuery()
 
     }
     await client.end()
@@ -51,6 +62,19 @@ CLI()
 
 //, revenue, vote_average, votes_count --REMEMBER TO ADD THESE COLUMNS TO SELECT QUERY
 
+
+
+
+// async function startStop() {
+//     searchTerm = await makeQuery()
+//     if (searchTerm != 'q') {
+//         continueRunning = true
+//     }
+//     else {
+//         continueRunning = false
+//     }
+//     return continueRunning
+// }
 
 
 
